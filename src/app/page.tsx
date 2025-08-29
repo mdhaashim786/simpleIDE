@@ -4,10 +4,15 @@ import { useState } from 'react';
 import axios from 'axios';
 import { ArrowUp } from "lucide-react";
 
+// Define a Message type
+type Message = {
+  role: 'user' | 'ai';
+  content: string;
+};
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
-  const [messages, setMessages] = useState<{ role: 'user' | 'ai'; content: string }[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const cleanResponse = (code: string) => {
@@ -20,7 +25,7 @@ export default function Home() {
   const generateCode = async () => {
     if (!prompt.trim()) return;
 
-    const newMessages = [...messages, { role: 'user', content: prompt }];
+    const newMessages: Message[] = [...messages, { role: 'user', content: prompt }];
     setMessages(newMessages);
     setPrompt('');
     setIsLoading(true);
@@ -46,23 +51,21 @@ export default function Home() {
   return (
     <div className="flex h-screen bg-gray-900 text-gray-100">
       {/* Sidebar */}
-     <div className="w-[300px] bg-gray-200 border-r border-gray-300 flex flex-col">
-  <div className="p-4 font-bold text-lg border-b border-gray-700">Chats</div>
-  <div className="flex-1 overflow-y-auto">
-    {messages
-      .filter((m) => m.role === 'user')
-      .map((m, i) => (
-        <div
-          key={i}
-          className="p-3 border-b border-gray-300 cursor-pointer hover:bg-gray-300 text-sm break-words break-all whitespace-pre-wrap"
-        >
-          {m.content}
+      <div className="w-[300px] bg-gray-200 border-r border-gray-300 flex flex-col">
+        <div className="p-4 font-bold text-lg border-b border-gray-700">Chats</div>
+        <div className="flex-1 overflow-y-auto">
+          {messages
+            .filter((m) => m.role === 'user')
+            .map((m, i) => (
+              <div
+                key={i}
+                className="p-3 border-b border-gray-300 cursor-pointer hover:bg-gray-300 text-sm whitespace-pre-wrap break-words break-all"
+              >
+                {m.content}
+              </div>
+            ))}
         </div>
-      ))}
-  </div>
-</div>
-
-
+      </div>
 
       {/* Main Panel */}
       <div className="flex-1 flex flex-col bg-gray-50">
@@ -113,10 +116,6 @@ export default function Home() {
             </button>
           </div>
         </div>
-
-
-
-
       </div>
     </div>
   );
